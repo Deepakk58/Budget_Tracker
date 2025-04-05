@@ -1,0 +1,127 @@
+#filters {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+@keyframes show_income {
+    0% {
+        opacity: 0;
+        height: 0;
+        padding: 0;
+        margin-bottom: 0;
+    }
+    50% {
+        opacity: 0;
+        height: 178px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    100% {
+        opacity: 1;
+        height: 178px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@keyframes show_expense {
+    0% {
+        opacity: 0;
+        height: 0;
+        padding: 0;
+        margin-bottom: 0;
+    }
+    50% {
+        opacity: 0;
+        height: 242.2px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    100% {
+        opacity: 1;
+        height: 242.2px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@keyframes hide_income {
+    0% {
+        opacity: 1;
+        height: 178px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    50% {
+        opacity: 0;
+        height: 178px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    100% {
+        opacity: 0;
+        height: 0px;
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+}
+
+@keyframes hide_expense {
+    0% {
+        opacity: 1;
+        height: 242.2px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    50% {
+        opacity: 0;
+        height: 242.2px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    100% {
+        opacity: 0;
+        height: 0px;
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+}
+
+@keyframes hide2 {
+    0% {
+        opacity: 1;
+        max-height: 300px;
+    }
+    50% {
+        opacity: 0;
+        max-height: 300px;
+    }
+    100% {
+        opacity: 0;
+        max-height: 0px;
+    }
+}
+
+.showclass_e {
+    animation: show_expense 1s ease-in-out forwards;
+}
+
+.showclass_i {
+    animation: show_income 1s ease-in-out forwards;
+}
+
+.hideclass_e {
+    animation: hide_expense 1s ease-in-out forwards;
+}
+
+.hideclass_i {
+    animation: hide_income 1s ease-in-out forwards;
+}
+
+.hideclass2 {
+    overflow: hidden;
+    animation: hide2 1s ease-in-out forwards;
+}

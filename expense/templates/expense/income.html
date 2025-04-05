@@ -1,0 +1,318 @@
+{% extends "expense/layout.html" %}
+
+{% block title %} Incomes {% endblock %}
+
+{% block script %}
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('date').setAttribute('max', new Date().toISOString().split('T')[0]);
+            
+            const box = document.querySelector('#filters');
+            const filter_btn = document.querySelector('#filter-btn');
+
+            if (box && filter_btn) {
+                filter_btn.addEventListener('click', function() {
+                    if (box.classList.contains('showclass_i')) {
+                        box.classList.remove('showclass_i');
+                        box.classList.add('hideclass_i');
+                        filter_btn.innerHTML = "Filter By"
+                    } 
+                    else {
+                        box.classList.remove('hideclass_i');
+                        box.classList.add('showclass_i');
+                        filter_btn.innerHTML = "Hide"
+                    }
+                });
+            }
+
+            const sortSelect = document.getElementById('sort');
+            const expenseList = document.querySelector('.income-Lst');
+
+            sortSelect.addEventListener('change', function () {
+                let expenses = Array.from(document.querySelectorAll('.income'));
+                if (expenses.length === 0) return;
+
+                expenses.sort((a, b) => {
+                    let sortType = sortSelect.value; 
+
+                    if (sortType.includes('date')) {
+                        let dateA = new Date(a.querySelector('#date').innerText);
+                        let dateB = new Date(b.querySelector('#date').innerText);
+                        return sortType === 'date-asc' ? dateA - dateB : dateB - dateA;
+                    }
+
+                    if (sortType.includes('amount')) {
+                        let amountA = parseFloat(a.querySelector('#amt').innerText.replace('Rs. ', ''));
+                        let amountB = parseFloat(b.querySelector('#amt').innerText.replace('Rs. ', ''));
+                        return sortType === 'amount-asc' ? amountA - amountB : amountB - amountA;
+                    }
+                });
+
+                const title = document.querySelector('.title');
+
+                const empty = document.querySelector('.empty');
+
+                
+                expenseList.innerHTML = '';
+                expenseList.appendChild(title);
+                expenses.forEach(expense => expenseList.appendChild(expense));
+                expenseList.appendChild(empty);
+            });
+        })
+
+        function filter() {
+            let min = document.querySelector('.minFilter').value;
+            let max = document.querySelector('.maxFilter').value;
+            const month = document.querySelector('.monthFilter').value;
+            const amt_msg = document.querySelector('.amt-msg');
+            amt_msg.style.display = 'none';
+
+            const incomes = document.querySelectorAll('.income');
+            if (incomes.length === 0) return;
+            
+            const emptyDiv = document.querySelector('.empty');
+            let empty = 'block';
+            
+            emptyDiv.style.display = empty;
+            let sum = 0;
+            incomes.forEach(income => {
+                let isVisible = true
+
+                if (month !== "") {
+                    const date = income.querySelector('#date').innerHTML
+                    const dateObj = moment(date, "MMMM D, YYYY").format('YYYY-MM-DD').slice(0,7); 
+                    
+                    if (month !== dateObj) {
+                        isVisible = false;
+                    }
+                }
+
+                min = min ? parseFloat(min) : -Infinity;
+                max = max ? parseFloat(max) : Infinity;
+
+                const amt = parseFloat(income.querySelector('#amt').innerHTML)
+
+                if (min > max) {
+                    amt_msg.style.display = 'block';
+                    return;
+                }
+
+                if (min > amt || max < amt) {
+                    isVisible = false;
+                }
+                if (isVisible === true) {
+                    empty = 'none';
+                    sum += amt;
+                }
+
+                income.style.display = isVisible ? "block" : 'none';
+            });
+
+            emptyDiv.style.display = empty;
+            total = document.querySelector('#total_income');
+            total.innerHTML = `<strong>Total Income:</strong> Rs.${sum}`;
+        }
+
+        function clear_filter() {   
+            let min = document.querySelector('.minFilter');
+            let max = document.querySelector('.maxFilter');
+            const month = document.querySelector('.monthFilter');
+            min.value = "";
+            max.value = "";
+            month.value = "";
+            
+            const amt_msg = document.querySelector('.amt-msg')
+            amt_msg.style.display = 'none';
+
+            const incomes = document.querySelectorAll('.income');
+            if (incomes.length === 0) return;
+            const emptyDiv = document.querySelector('.empty');
+
+            emptyDiv.style.display = 'none';
+            let sum = 0;
+            
+            incomes.forEach(income => {
+                income.style.display = "block";
+                sum += parseFloat(income.querySelector('#amt').innerHTML);
+            });
+
+            total = document.querySelector('#total_income');
+            total.innerHTML = `<strong>Total Income:</strong> Rs.${sum}`;
+        }
+
+        function delete_income(event, id) {
+            const btn = event.currentTarget;
+            const income = btn.parentElement.parentElement.parentElement.parentElement;
+            const total = document.querySelector('#total_income');
+            let sum = total.innerHTML
+            sum = parseFloat(sum.slice(33));
+            
+            fetch(`delete_income/${id}`)
+            .then(response => response.json())
+            .then(result => {
+                income.classList.add('hideclass2')
+                sum -= parseFloat(income.querySelector('#amt').innerHTML)
+                
+                income.addEventListener('animationend', () =>  {
+                    income.remove();
+                });
+
+                total.innerHTML = `<strong>Total Income:</strong> Rs.${sum}`;
+            })
+        }
+
+        function edit_income(event, id) {
+            const btn = event.currentTarget;
+            const income = btn.parentElement.parentElement.parentElement.parentElement;
+            const form = income.querySelector('.form');
+            const box = income.querySelector('.col-12');
+            box.style.display = 'none';
+            form.style.display = 'block';
+
+
+            const date = income.querySelector('#date').innerHTML;
+            const dateObj = moment(date, "MMMM D, YYYY").format('YYYY-MM-DD')
+            const date_form = form.querySelector('.date_form')
+            date_form.value = dateObj
+            
+        }
+        function close_form(event, id) {
+            const btn = event.currentTarget;
+            const income = btn.parentElement.parentElement.parentElement.parentElement.parentElement;
+            const form = income.querySelector('.form');
+            const box = income.querySelector('.col-12');
+
+            box.style.display = 'block';
+            form.style.display = 'none';
+        }
+
+    </script>
+
+{% endblock %}
+
+{% block body %}
+
+    <h2 class="ml-2">Incomes</h2>
+    {% if user.is_authenticated %}
+        <div class="border border-dark rounded mx-2 mt-2 pt-2 w-50">
+
+            <div class="pl-2 border-bottom border-dark"><h6>Add an Income</h6></div>
+            <form action="{% url 'add_income' %}" method="post" class="m-3">
+                {% csrf_token %}
+                <div class="form-group w-50">
+                    <input class="form-control border-dark" type="text" name="name" placeholder="Name" required>
+                </div>
+                <div class="form-group w-50">
+                    <input class="form-control border-dark" type="number" name="amount" placeholder="Amount" min="0" required>
+                </div>
+                <div class="form-group w-50">
+                    <input id="date" class="form-control border-dark" type="date" name="date" required>
+                </div>
+                <input class="btn btn-primary" type="submit" value="Add">
+            </form>
+
+        </div>
+
+        <button id="filter-btn" class="ml-2 my-2 btn btn-sm btn-info">Filter By</button>
+        
+        <div class="ml-2 amt-msg" style="color: red; display: none;">Min has to be less than Max</div>
+        <div id="filters" class="border border-dark rounded ml-2 w-50">
+
+            <div class="ml-2 form-group d-flex align-items-center w-50">
+                <div class="mr-2 pb-2" style="width: 277px;">Amount-Range:</div>
+                <div class="form-group w-50">
+                    <input class="form-control border-dark minFilter" autofocus type="number" placeholder="Min">
+                </div>
+                <div class="mx-2 pb-3">To</div>
+                <div class="form-group w-50">
+                    <input class="form-control border-dark maxFilter" autofocus type="number" placeholder="Max">
+                </div>
+            </div>
+
+            <div class="ml-2 form-group d-flex align-items-center w-50">
+                <div class="mr-2 pb-2" style="width: 250px;">Month:</div>
+                <input type="month" class="monthFilter form-control border-dark">
+            </div>
+            <button onclick="filter()" class="ml-1 btn btn-sm btn-info">Filter</button>
+            <button onclick="clear_filter()" class="ml-1 btn btn-sm btn-danger">Clear</button>
+        </div>
+
+
+        <label class="ml-2" for="sort">Sort By:</label>
+        <select id="sort" class="form-control border-dark w-25 ml-2 mb-4">
+            <option value="date-desc">Date (Newest First)</option>
+            <option value="date-asc">Date (Oldest First)</option>
+            <option value="amount-desc">Amount (Highest First)</option>
+            <option value="amount-asc">Amount (Lowest First)</option>
+        </select>
+
+        <div id="total_income" class="ml-2" style="font-size: 20px;"><strong>Total Income</strong> Rs.{{ total_income }}</div>
+        
+        <div class="income-Lst row border border-dark rounded ml-2 mb-2 pt-2 w-50">
+            
+            <div class="py-1 pl-2 mb-1 border-bottom border-dark title w-100"><h5>Income List</h5></div>
+            {% for income in incomes %}
+
+                <div class="border border-dark rounded mx-2 my-2 w-100 income">
+
+                    <div class="col-12">
+                        <h5 class="mt-2 card-title" >{{ income.name }}</h5>
+                        <b>Amount: </b>Rs. <a id="amt">{{income.amount}}</a>
+                        <div class="my-1 text-muted d-flex align-items-center justify-content-between">
+
+                            <div id="date" class="flex-grow-1">{{income.date}}</div>
+    
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button onclick="edit_income(event, '{{ income.id }}')" type="button" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button onclick="delete_income(event, '{{ income.id }}')" type="button" class="btn btn-sm btn-danger">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form w-100" style="display: none;">
+                        <div class="w-100 pl-2 pt-2 border-bottom border-dark"><h6>Edit Income</h6></div>
+                        <form action="{% url 'edit_income' income.id %}" method="post" class="mx-3 mt-3 w-100">
+                            {% csrf_token %}
+                            <div class="form-group w-50">
+                                <input class="form-control border-dark" type="text" name="name" placeholder="Name" value="{{ income.name }}" required>
+                            </div>
+                            <div class="form-group w-50">
+                                <input class="form-control border-dark" type="number" name="amount" placeholder="Amount" value="{{ income.amount }}" required>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="form-group w-50">
+                                    <input class="date_form form-control border-dark" type="date" name="date" min="0" required>
+                                </div>
+        
+                                <div class="btn-group mr-4" role="group" aria-label="Basic mixed styles example">
+                                    <input class="btn btn-sm btn-primary" type="submit" value="Save">
+                                    <button onclick="close_form(event, '{{ income.id }}')" type="button" class="btn btn-sm btn-danger">Cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            
+            {% empty %}
+            
+                <div class="ml-2 mb-2"> No Incomes. </div>
+
+            {% endfor %}
+
+            <div class="empty ml-2 mb-2" style="display: none;">No Incomes. </div>
+        </div>
+
+    {% else %}
+
+        <a class="ml-2" href="{% url 'index' %}">Login Here</a>
+
+    {% endif %}
+    
+{% endblock %}
