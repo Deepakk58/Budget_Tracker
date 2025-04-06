@@ -7,7 +7,6 @@
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('date').setAttribute('max', new Date().toISOString().split('T')[0]);
 
             const box = document.querySelector('#filters');
             const filter_btn = document.querySelector('#filter-btn');
@@ -189,6 +188,8 @@
             const date = expense.querySelector('#date').innerHTML;
             const dateObj = moment(date, "MMMM D, YYYY").format('YYYY-MM-DD');
             const date_form = form.querySelector('.date_form');
+
+            date_form.setAttribute('max', new Date().toISOString().split('T')[0]);
             date_form.value = dateObj;            
         }
         function close_form(event, id) {
@@ -209,44 +210,15 @@
 
     <h2 class="ml-2">Expenses</h2>
     {% if user.is_authenticated %}
-        <div class="border border-dark rounded mx-2 mt-2 pt-2 w-50">
-
-            <div class="pl-2 border-bottom border-dark"><h6>Add an Expense</h6></div>
-            <form action="{% url 'add_expense' %}" method="post" class="m-3">
-                {% csrf_token %}
-                <div class="form-group w-50">
-                    <input class="form-control border-dark" type="text" name="name" placeholder="Name" required>
-                </div>
-                <div class="form-group w-50">
-                    <input class="form-control border-dark" type="number" name="amount" placeholder="Amount" min="0" required>
-                </div>
-                <div class="form-group w-50">
-                    <input id="date" class="form-control border-dark" type="date" name="date" required>
-                </div>
-                <div class="form-group w-50">
-                    <label>Category:</label>
-                    <select class="form-control border-dark" name="Category" required>
-
-                        <option value="" disabled selected>Select a category</option>
-                        
-                        {% for category in categories %}
-                            <option value="{{ category.title }}">{{ category.title }}</option>
-                        {% endfor %}
-                        
-                    </select>
-                </div>
-                <input class="btn btn-primary" type="submit" value="Add">
-            </form>
-
-        </div>
 
         <button id="filter-btn" class="ml-2 my-2 btn btn-sm btn-info">Filter By</button>
         
         <div class="ml-2 amt-msg" style="color: red; display: none;">Min has to be less than Max</div>
-        <div id="filters" class="border border-dark rounded ml-2 w-50">
-            <div class="ml-2 form-group d-flex align-items-center w-50" >
-                <div class="mr-2 pt-2"  style="width: 250px;">Category:</div>
-                <select class="form-control border-dark categoryFilter">
+
+        <div id="filters" class="border border-dark rounded ml-2 col-12 col-md-9 col-lg-6">
+            <div class="form-group d-flex align-items-center col-6 p-0" >
+                <div class="mr-2 col-8 col-lg-6 p-0 pt-2">Category:</div>
+                <select class="form-control border-dark categoryFilter col-10 col-md-8 col-sm-6 col-lg-6">
 
                     <option value="" selected>All categories</option>
 
@@ -258,20 +230,20 @@
                 </select>
             </div>
 
-            <div class="ml-2 form-group d-flex align-items-center w-50">
-                <div class="mr-2 pb-2" style="width: 277px;">Amount-Range:</div>
-                <div class="form-group w-50">
-                    <input class="form-control border-dark minFilter" autofocus type="number" placeholder="Min">
+            <div class="form-group d-flex align-items-center col-6 p-0">
+                <div class="mr-2 col-8 col-lg-6 p-0 pb-2">Amount-Range:</div>
+                <div class="form-group col-5 col-sm-3 col-lg-3 p-0">
+                    <input class="form-control border-dark minFilter" type="number" placeholder="Min">
                 </div>
                 <div class="mx-2 pb-3">To</div>
-                <div class="form-group w-50">
-                    <input class="form-control border-dark maxFilter" autofocus type="number" placeholder="Max">
+                <div class="form-group col-5 col-sm-3 col-lg-3 p-0">
+                    <input class="form-control border-dark maxFilter" type="number" placeholder="Max">
                 </div>
             </div>
 
-            <div class="ml-2 form-group d-flex align-items-center w-50">
-                <div class="mr-2 pb-2" style="width: 250px;">Month:</div>
-                <input type="month" class="monthFilter form-control border-dark">
+            <div class="form-group d-flex align-items-center col-6 p-0">
+                <div class="mr-2 col-8 col-lg-6 p-0">Month:</div>
+                <input type="month" class="monthFilter form-control border-dark col-10 col-md-8 col-sm-6 col-lg-6">
             </div>
             <button onclick="filter()" class="ml-1 btn btn-sm btn-info">Filter</button>
             <button onclick="clear_filter()" class="ml-1 btn btn-sm btn-danger">Clear</button>
@@ -279,7 +251,7 @@
 
 
         <label class="ml-2" for="sort">Sort By:</label>
-        <select id="sort" class="form-control border-dark w-25 ml-2 mb-3">
+        <select id="sort" class="form-control border-dark col-lg-3 col-sm-6 col-md-5 col-12 ml-2 mb-3">
             <option value="date-desc">Date (Newest First)</option>
             <option value="date-asc">Date (Oldest First)</option>
             <option value="amount-desc">Amount (Highest First)</option>
@@ -290,9 +262,9 @@
 
         <div id="total_expense" class="ml-2" style="font-size: 20px;"><strong>Total Expense:</strong> Rs.{{ total_expense }}</div>
 
-        <div class="expense-Lst row border border-dark rounded ml-2 mb-2 pt-2 w-50">
+        <div class="expense-Lst row border border-dark rounded ml-2 mb-2 col-12 col-md-9 col-lg-6 p-0 pt-2">
             
-            <div class="py-1 pl-2 mb-1 border-bottom border-dark title" style="width: 100%;"><h5>Expense List</h5></div>
+            <div class="py-1 pl-2 mb-1 border-bottom border-dark title w-100"><h5>Expense List</h5></div>
             
             {% for expense in expenses %}
 
@@ -324,18 +296,18 @@
                         <div class="w-100 pl-2 pt-2 border-bottom border-dark"><h6>Edit Expense</h6></div>
                         <form action="{% url 'edit_expense' expense.id %}" method="post" class="mx-3 mt-3 w-100">
                             {% csrf_token %}
-                            <div class="form-group w-50">
-                                <input class="form-control border-dark" autofocus type="text" name="name" placeholder="Name" value="{{ expense.name }}" required>
+                            <div class="form-group col-lg-6 col-7 p-0">
+                                <input class="form-control border-dark" type="text" name="name" placeholder="Name" value="{{ expense.name }}" required>
                             </div>
-                            <div class="form-group w-50">
-                                <input class="form-control border-dark" autofocus type="number" name="amount" placeholder="Amount" value="{{ expense.amount }}" required>
+                            <div class="form-group col-lg-6 col-7 p-0">
+                                <input class="form-control border-dark" type="number" name="amount" placeholder="Amount" value="{{ expense.amount }}" required>
                             </div>
-                            <div class="form-group w-50">
-                                <input class="date_form form-control border-dark" autofocus type="date" name="date" min="0" required>
+                            <div class="form-group col-lg-6 col-7 p-0">
+                                <input class="date_form form-control border-dark" type="date" name="date" required>
                             </div>
                             
                             <div class="d-flex align-items-center justify-content-between">
-                                <div class="form-group w-50">
+                                <div class="form-group col-lg-6 col-7 p-0">
                                     <label>Category:</label>
                                     <select class="form-control border-dark" name="Category" required>
                 

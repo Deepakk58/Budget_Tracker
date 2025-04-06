@@ -6,6 +6,16 @@
     margin-bottom: 0;
 }
 
+a {
+    color: rgb(33, 37, 41);
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(33, 37, 41);
+    text-decoration: none;
+}
+
 @keyframes show_income {
     0% {
         opacity: 0;

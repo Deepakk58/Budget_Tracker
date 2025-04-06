@@ -1,16 +1,8 @@
 {% extends "expense/layout.html" %}
 
-{% block title %} Expenses {% endblock %}
+{% block title %} Dashboard {% endblock %}
 
 {% block script %}
-
-    <style>
-        a {
-            color: rgb(33, 37, 41);
-            text-decoration: none;
-        }
-    </style>
-
     
     <script>
 
@@ -18,62 +10,65 @@
 
             fetch(`/get_data`)
             .then(response => response.json())
-            .then(result => {                
-                var category_chrt = document.getElementById("CategoryPieChart").getContext("2d");
-                var expense_chrt = document.getElementById("expenseLineChart").getContext("2d");
-                var income_chrt = document.getElementById("incomeExpenseChart").getContext("2d");
+            .then(result => {     
+                if (result['message'] === "Data Recieved Successfully") {
                 
-                new Chart(category_chrt, {
-                    type: 'pie',
-                    data: {
-                        labels: result['cat_labels'],
-                        datasets: [{
-                            data: result['cat_totals'],
-                            backgroundColor: ['yellow', 'aqua', 'pink', 'lightgreen', 'gold', 'lightblue'],
-                            hoverOffset: 5
-                        }],
-                    },
-                    options: {
-                        responsive: true,
-                    },
-                });
+                    var category_chrt = document.getElementById("CategoryPieChart").getContext("2d");
+                    var expense_chrt = document.getElementById("expenseLineChart").getContext("2d");
+                    var income_chrt = document.getElementById("incomeExpenseChart").getContext("2d");
+                    
+                    new Chart(category_chrt, {
+                        type: 'pie',
+                        data: {
+                            labels: result['cat_labels'],
+                            datasets: [{
+                                data: result['cat_totals'],
+                                backgroundColor: ['yellow', 'aqua', 'pink', 'lightgreen', 'gold', 'lightblue'],
+                                hoverOffset: 5
+                            }],
+                        },
+                        options: {
+                            responsive: true,
+                        },
+                    });
 
-                new Chart(expense_chrt, {
-                    type: 'line',
-                    data: {
-                        labels: result['line_dates'],
-                        datasets: [{
-                            label: "Daily Expense",
-                            data: result['line_totals'],
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            tension: 0, 
-                            fill: false
-                        }],
-                    },
-                    options: {
-                        responsive: true,
-                    },
-                });
+                    new Chart(expense_chrt, {
+                        type: 'line',
+                        data: {
+                            labels: result['line_dates'],
+                            datasets: [{
+                                label: "Daily Expense",
+                                data: result['line_totals'],
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                tension: 0, 
+                                fill: false
+                            }],
+                        },
+                        options: {
+                            responsive: true,
+                        },
+                    });
 
-                new Chart(income_chrt, {
-                    type: 'bar',
-                    data: {
-                        labels: result['months'],
-                        datasets: [
-                            {
-                                label: 'Income',
-                                data: result['inc'],
-                                backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                            },
-                            {
-                                label: 'Expense',
-                                data: result['exp'],
-                                backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                            }
-                        ]
-                    },
-                    options: { responsive: true, scales: { x: { stacked: false }, y: { beginAtZero: true } } }
-                });
+                    new Chart(income_chrt, {
+                        type: 'bar',
+                        data: {
+                            labels: result['months'],
+                            datasets: [
+                                {
+                                    label: 'Income',
+                                    data: result['inc'],
+                                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                                },
+                                {
+                                    label: 'Expense',
+                                    data: result['exp'],
+                                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                                }
+                            ]
+                        },
+                        options: { responsive: true, scales: { x: { stacked: false }, y: { beginAtZero: true } } }
+                    });
+                }
             })
 
             const login_view = document.querySelector('.login-view')
@@ -105,8 +100,8 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-    <div class="ml-2" style="font-size: 20px;">Overview:</div>
-        <table class="table table-bordered ml-2 mb-2 w-50">
+        <div class="ml-2" style="font-size: 20px;">Overview:</div>
+        <table class="table table-bordered ml-2 mb-2 col-lg-6 col-md-9 col-12">
             <tbody>
                 <tr>
                     <th scope="row">Total Expense: </th>
@@ -124,69 +119,76 @@
         </table>
 
         <div class="ml-2" style="font-size: 20px;">Last 5 Expenses:</div>
-        <table class="table table-bordered ml-2 mb-3 w-50">
-            <thead>
-                <tr>
-                    <th colspan="5"><a href="{% url 'income' %}">Expense List</a></th>
-                </tr>
-                <tr>
-                    <th scope="col">Sr No.</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for expense in expenses %}
+
+        <div class="p-0 col-lg-6 col-md-9 col-12">
+
+            <table class="table table-bordered table-sm ml-1 mb-3 w-100">
+                <thead>
                     <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ expense.name }}</td>
-                        <td>Rs. {{ expense.amount }}</td>
-                        <td>{{ expense.category.title }}</td>
-                        <td>{{ expense.date }}</td>
+                        <th colspan="5"><a href="{% url 'income' %}">Expense List</a></th>
                     </tr>
-                {% empty %}
                     <tr>
-                        <td colspan="5">No Expense. </td>
+                        <th scope="col">Sr No.</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Date</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ expense.name }}</td>
+                            <td>Rs. {{ expense.amount }}</td>
+                            <td>{{ expense.category.title }}</td>
+                            <td>{{ expense.date }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No Expense. </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
         
         <div class="ml-2" style="font-size: 20px;">Last 5 Incomes:</div>
 
-        <table class="table table-bordered ml-2 mb-3 w-50">
-            <thead>
-                <tr class="nav-item">
-                    <th colspan="4"><a href="{% url 'income' %}">Income List</a></th>
-                </tr>
-                <tr>
-                    <th scope="col">Sr No.</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for income in incomes %}
-                    <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ income.name }}</td>
-                        <td>Rs. {{ income.amount }}</td>
-                        <td>{{ income.date }}</td>
+        <div class="p-0 col-lg-6 col-md-9 col-12 ">
+            <table class="table table-bordered table-sm ml-2 mb-3 w-100">
+                <thead>
+                    <tr class="nav-item">
+                        <th colspan="4"><a href="{% url 'income' %}">Income List</a></th>
                     </tr>
-                {% empty %}
                     <tr>
-                        <td colspan="4">No Income. </td>
+                        <th scope="col">Sr No.</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Date</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for income in incomes %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ income.name }}</td>
+                            <td>Rs. {{ income.amount }}</td>
+                            <td>{{ income.date }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No Income. </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         
         <div class="ml-2" style="font-size: 20px;">Analysis:</div>
 
-        <div class=" border border-dark rounded mx-2 my-2 w-50 expense">
+        <div class=" border border-dark rounded mx-2 my-2 p-0 col-lg-6 col-md-9 col-12 expense">
             <div class="pt-1 pl-2 mb-1 border-bottom border-dark title w-100"><h5>Category-wise Expense:</h5></div>
             <div class="ml-2 w-100 d-flex align-items-center row">
                 <canvas id="CategoryPieChart" class="w-100 h-100"></canvas>
@@ -217,10 +219,10 @@
     
             <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
-                <div class="form-group w-25">
+                <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
                     <input autofocus class="form-control border-dark" type="text" name="username" placeholder="Username">
                 </div>
-                <div class="form-group w-25">
+                <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
                     <input class="form-control border-dark" type="password" name="password" placeholder="Password">
                 </div>
                 <input class="btn btn-primary" type="submit" value="Login">
@@ -243,16 +245,16 @@
         
             <form action="{% url 'register' %}" method="post">
                 {% csrf_token %}
-                <div class="form-group w-25">
+                <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
                     <input class="form-control border-dark" autofocus type="text" name="username" placeholder="Username">
                 </div>
-                <div class="form-group w-25">
+                <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
                     <input class="form-control border-dark" type="email" name="email" placeholder="Email Address">
                 </div>
-                <div class="form-group w-25">
+                <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
                     <input class="form-control border-dark" type="password" name="password" placeholder="Password">
                 </div>
-                <div class="form-group w-25">
+                <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
                     <input class="form-control border-dark" type="password" name="confirmation" placeholder="Confirm Password">
                 </div>
                 <input class="btn btn-primary" type="submit" value="Register">

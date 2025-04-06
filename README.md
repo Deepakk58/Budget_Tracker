@@ -1,4 +1,4 @@
-# Smart-Expense-Tracker
+# Budget-Tracker
 Project Name: Smart Expense Tracker\
 \
 Overview\

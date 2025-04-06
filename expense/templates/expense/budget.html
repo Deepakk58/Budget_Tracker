@@ -56,30 +56,14 @@
     
     {% if user.is_authenticated %}
 
-    <div class="border border-dark rounded mx-2 my-2 pt-2 w-50">
+    <div class="row border border-dark rounded ml-2 mb-2 col-12 col-md-9 col-lg-6 p-0 pt-2">
 
-        <div class="pl-2 border-bottom border-dark"><h6>Set Budget(Per Month)</h6></div>
-        <form action="{% url 'set_budget' %}" method="post" class="m-3">
-            {% csrf_token %}
-
-            {% for category in categories %}
-                <div class="w-100 d-flex align-items-center">
-                    <label class="col-3 p-0">{{ category.title }}:</label>
-                    <div class="form-group w-50">
-                        <input class="form-control border-dark" type="number" name="{{ category.title }}" placeholder="Amount" min="0">
-                    </div>
-                </div>
-            {% endfor %}
-            
-            <input class="btn btn-primary" type="submit" value="Save">
-        </form>
-
-    </div>
-
-    <div class="row border border-dark rounded ml-2 mb-2 pt-2 w-50">
         <div class="py-1 pl-2 mb-1 border-bottom border-dark title w-100"><h5>Budget(Per Month)</h5></div>
+        
         {% for budget in budgets %}
+
             <div class="border border-dark rounded mx-2 my-2 w-100 budget">
+
                 <div class="mb-2 col-12">
 
                     <h5 class="mt-2 card-title" >{{ budget.category.title }}</h5>

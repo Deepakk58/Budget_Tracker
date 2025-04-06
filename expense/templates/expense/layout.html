@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} Budget Tracker {% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -14,34 +15,33 @@
     {% block script %} {% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'index' %}">Budget Tracker</a>
-        <div>
-            <ul class="navbar-nav mr-auto">
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link"><strong>{{ user.username }}</strong></a>
-                    </li>
-                {% endif %}
-                <li class="nav-item">
+    <nav class="navbar navbar-expand bg-light w-100 d-flex justify-content-between align-items-center">
+        <a class="navbar-brand me-3" href="{% url 'index' %}">Budget Tracker</a>
+        <ul class="navbar-nav d-flex flex-row flex-nowrap overflow-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item px-2">
+                    <a class="nav-link" href="{% url 'profile' %}"><strong>{{ user.username }}</strong></a>
+                </li>
+            {% endif %}
+            <li class="nav-item px-2">
                 <a class="nav-link" href="{% url 'expense' %}">Expenses</a>
-                </li>
-                <li class="nav-item">
+            </li>
+            <li class="nav-item px-2">
                 <a class="nav-link" href="{% url 'income' %}">Income</a>
-                </li>
-                <li class="nav-item">
+            </li>
+            <li class="nav-item px-2">
                 <a class="nav-link" href="{% url 'budget' %}">Budget</a>
+            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item px-2">
+                    <a class="nav-link" href="{% url 'logout' %}">Log&nbsp;Out</a> <!-- Use non-breaking space -->
                 </li>
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-                    </li>
-                
-                {% endif %}
-            </ul>
-        </div>
+            {% endif %}
+        </ul>
     </nav>
-    <div class="body">
+    
+    
+    <div class="body mr-2 pr-2">
         {% block body %}
         {% endblock %}
     </div>

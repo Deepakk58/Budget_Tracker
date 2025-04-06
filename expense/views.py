@@ -89,7 +89,20 @@ def budget(request):
     })
 
 
+def profile(request):
+    
+    categories = Category.objects.all()
+    return render(request, "expense/profile.html", {
+        "categories": categories,
+    })
+
+
 def get_data(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({
+        "message": "Not Signed In"
+    })
+    
     cat_data = Expense.objects.filter(user=request.user).values('category').annotate(total=Sum('amount'))
     
     cat_labels = [Category.objects.get(pk = x['category']).title for x in cat_data]
@@ -116,6 +129,7 @@ def get_data(request):
         expense_data[exp.date.strftime("%Y-%m")] += exp.amount
 
     return JsonResponse({
+        "message": "Data Recieved Successfully",
         "cat_labels": cat_labels, 
         "cat_totals": cat_totals,
         "line_dates": dates,
@@ -142,7 +156,7 @@ def add_expense(request):
             date = date
         )
         expense.save()
-        return HttpResponseRedirect(reverse("expense"))
+        return HttpResponseRedirect(reverse("profile"))
     
     
 def delete_expense(request, id):
@@ -184,7 +198,7 @@ def add_income(request):
             date = date
         )
         income.save()
-        return HttpResponseRedirect(reverse("income"))
+        return HttpResponseRedirect(reverse("profile"))
     
 
 def delete_income(request, id):
@@ -222,7 +236,7 @@ def set_budget(request):
                     category = category,
                     defaults={'amount': amt}
                 )
-        return HttpResponseRedirect(reverse("budget")) 
+        return HttpResponseRedirect(reverse("profile")) 
 
 
 

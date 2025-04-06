@@ -6,6 +6,8 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("expense", views.expense, name="expense"),
     path("income", views.income, name="income"),
+    path("budget", views.budget, name="budget"),
+    path("profile", views.profile, name="profile"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
@@ -15,7 +17,6 @@ urlpatterns = [
     path("add_income", views.add_income, name="add_income"),
     path("delete_income/<int:id>", views.delete_income, name="delete_income"),
     path("edit_income/<int:id>", views.edit_income, name="edit_income"),
-    path("budget", views.budget, name="budget"),
     path("set_budget", views.set_budget, name="set_budget"),
     path("get_data", views.get_data, name="get_data")
 ]
