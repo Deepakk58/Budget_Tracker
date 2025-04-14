@@ -167,11 +167,18 @@
             fetch(`delete_expense/${id}`)
             .then(response => response.json())
             .then(result => {
+                
                 expense.classList.add('hideclass2')
                 sum -= parseFloat(expense.querySelector('#amt').innerHTML)
                 
                 expense.addEventListener('animationend', () =>  {
                     expense.remove();
+
+                    if (result["size"] === 0) {
+                        const empty = document.querySelector('.empty')
+                        empty.style.display = 'block'
+                        
+                    }
                 });
                 total.innerHTML = `<strong>Total Expense:</strong> Rs.${sum}`;
             })

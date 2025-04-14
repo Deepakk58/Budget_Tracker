@@ -150,13 +150,19 @@
             fetch(`delete_income/${id}`)
             .then(response => response.json())
             .then(result => {
+                
                 income.classList.add('hideclass2')
                 sum -= parseFloat(income.querySelector('#amt').innerHTML)
                 
                 income.addEventListener('animationend', () =>  {
                     income.remove();
+                    if (result["size"] === 0) {
+                        const empty = document.querySelector('.empty')
+                        empty.style.display = 'block'
+                        
+                    }
                 });
-
+                
                 total.innerHTML = `<strong>Total Income:</strong> Rs.${sum}`;
             })
         }

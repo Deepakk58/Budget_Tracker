@@ -178,7 +178,8 @@ def add_expense(request):
 def delete_expense(request, id):
     expense = Expense.objects.filter(pk = id).first()
     expense.delete()
-    return JsonResponse({"message": "Expense Removed"})
+    size = len(Expense.objects.filter(user = request.user).all())
+    return JsonResponse({"message": "Expense Removed", "size": size})
     
 
 def edit_expense(request, id):
@@ -220,7 +221,8 @@ def add_income(request):
 def delete_income(request, id):
     income = Income.objects.filter(pk = id).first()
     income.delete()
-    return JsonResponse({"message": "Income Removed"})
+    size = len(Income.objects.filter(user = request.user).all())
+    return JsonResponse({"message": "Income Removed", "size": size})
 
 
 def edit_income(request, id):
