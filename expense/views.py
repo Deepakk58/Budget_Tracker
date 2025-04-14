@@ -11,8 +11,24 @@ from decimal import Decimal
 
 from .models import *
 
+import string
+
+def is_valid_password(password):
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not any(char.islower() for char in password):
+        return False, "Password must contain a lowercase letter."
+    if not any(char.isupper() for char in password):
+        return False, "Password must contain an uppercase letter."
+    if not any(char.isdigit() for char in password):
+        return False, "Password must contain a digit."
+    if not any(char in string.punctuation for char in password):
+        return False, "Password must contain a special character."
+    return True, "Password is strong."
+
 
 # Create your views here.
+
 def index(request):
     if not request.user.is_authenticated:
         return render(request, "expense/index.html")
@@ -263,23 +279,30 @@ def logout_view(request):
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
-        email = request.POST["email"]
 
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
             return render(request, "expense/index.html", {
-                "message": "Passwords must match."
+                "r_message": "Passwords must match."
+            })
+        valid, msg = is_valid_password(password)
+        if not valid:
+            return render(request, "expense/index.html", {
+                "r_message": msg
             })
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = User.objects.create_user(
+                username = username, 
+                password = password
+                )
             user.save()
         except IntegrityError:
             return render(request, "expense/index.html", {
-                "message": "Username already taken."
+                "r_message": "Username already taken."
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))

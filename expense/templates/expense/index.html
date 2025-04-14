@@ -77,8 +77,15 @@
             const register_btn = document.querySelector('.register-btn')
 
             if (login_view && register_view) {
-                login_view.style.display = 'block'
-                register_view.style.display = 'none'
+                const r_message = document.querySelector('.r_message')
+                if (r_message) {
+                    login_view.style.display = 'none'
+                    register_view.style.display = 'block'
+                }
+                else {
+                    login_view.style.display = 'block'
+                    register_view.style.display = 'none'
+                }
             }
 
             if (login_btn && register_btn) {
@@ -112,7 +119,7 @@
                     <td>Rs. {{ total_income }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Savings: </th>
+                    <th scope="row">Balance: </th>
                     <td>Rs. {{ saving }}</td>
                 </tr>
             </tbody>
@@ -220,7 +227,7 @@
             <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
-                    <input autofocus class="form-control border-dark" type="text" name="username" placeholder="Username">
+                    <input  class="form-control border-dark" type="text" name="username" placeholder="Username">
                 </div>
                 <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
                     <input class="form-control border-dark" type="password" name="password" placeholder="Password">
@@ -239,17 +246,14 @@
         
             <h2>Register</h2>
         
-            {% if message %}
-                <div>{{ message }}</div>
+            {% if r_message %}
+                <div class="r_message">{{ r_message }}</div>
             {% endif %}
         
             <form action="{% url 'register' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
-                    <input class="form-control border-dark" autofocus type="text" name="username" placeholder="Username">
-                </div>
-                <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
-                    <input class="form-control border-dark" type="email" name="email" placeholder="Email Address">
+                    <input class="form-control border-dark"  type="text" name="username" placeholder="Username">
                 </div>
                 <div class="form-group col-lg-3 col-sm-6 col-12 p-0">
                     <input class="form-control border-dark" type="password" name="password" placeholder="Password">
