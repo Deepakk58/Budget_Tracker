@@ -273,7 +273,7 @@
                                 <input class="form-control border-dark" type="text" name="name" placeholder="Name" value="{{ income.name }}" required>
                             </div>
                             <div class="form-group col-lg-6 col-7 p-0">
-                                <input class="form-control border-dark" type="number" name="amount" placeholder="Amount" value="{{ income.amount }}" required>
+                                <input class="form-control border-dark" type="number" name="amount" placeholder="Amount" value="{{ income.amount }}" min="0" step="0.01" required>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between">

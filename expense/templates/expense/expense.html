@@ -307,7 +307,7 @@
                                 <input class="form-control border-dark" type="text" name="name" placeholder="Name" value="{{ expense.name }}" required>
                             </div>
                             <div class="form-group col-lg-6 col-7 p-0">
-                                <input class="form-control border-dark" type="number" name="amount" placeholder="Amount" value="{{ expense.amount }}" required>
+                                <input class="form-control border-dark" type="number" name="amount" placeholder="Amount" value="{{ expense.amount }}" min="0" step="0.01" required>
                             </div>
                             <div class="form-group col-lg-6 col-7 p-0">
                                 <input class="date_form form-control border-dark" type="date" name="date" required>
